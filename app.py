@@ -1,37 +1,40 @@
 #----------------------------------------------------------------------------#
 # Imports
 #----------------------------------------------------------------------------#
-
 import json
 import dateutil.parser
 import babel
-from flask import Flask, render_template, request, Response, flash, redirect, url_for
+from flask import (
+    Flask,
+    render_template,
+    request,
+    Response,
+    flash,
+    redirect,
+    url_for
+)
 from flask_moment import Moment
 from flask_sqlalchemy import SQLAlchemy
 import logging
 from logging import Formatter, FileHandler
-from flask_wtf import Form
+# from flask_wtf import Form
 from forms import *
+from wtforms import Form, BooleanField, StringField, PasswordField, validators
 import sys
 import os
 import config
 from flask_migrate import Migrate
-from models import *
-
+from models import app, db, Venue, Artist, Show
 #----------------------------------------------------------------------------#
 # App Config.
 #----------------------------------------------------------------------------#
-
-app = Flask(__name__)
-moment = Moment(app)
 app.config.from_object('config')
-db = SQLAlchemy(app)
+db.init_app(app)
+moment = Moment(app)
 
 # TODO: connect to a local postgresql database
 app.config['SQLALCHEMY_DATABASE_URI'] = config.SQLALCHEMY_DATABASE_URI
-
-migrate = Migrate(app, db)
-
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 #----------------------------------------------------------------------------#
 # Filters.
 #----------------------------------------------------------------------------#
@@ -138,8 +141,9 @@ def create_venue_submission():
   # TODO: insert form data as a new Venue record in the db, instead
   # TODO: modify data to be the data object returned from db insertion
   # on successful db insert, flash success
-  form = VenueForm()
-  if form.validate_on_submit():
+  form = VenueForm(request.form)
+  print("form: ", form.address.data)
+  if form.validate():
     print("form validated")
     try:
       venue = Venue(

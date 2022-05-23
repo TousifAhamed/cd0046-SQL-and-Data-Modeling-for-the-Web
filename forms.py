@@ -1,7 +1,9 @@
 from datetime import datetime
-from flask_wtf import Form
+# from flask_wtf import Form
 from wtforms import StringField, SelectField, SelectMultipleField, DateTimeField, BooleanField
-from wtforms.validators import DataRequired, AnyOf, URL
+from wtforms.validators import DataRequired, AnyOf, URL, Regexp
+from wtforms import Form, BooleanField, StringField, PasswordField, validators
+
 
 class ShowForm(Form):
     artist_id = StringField(
